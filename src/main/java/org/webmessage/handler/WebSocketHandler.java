@@ -1,5 +1,5 @@
 package org.webmessage.handler;
 
-public interface WebSocketHandler{
+public interface WebSocketHandler extends HttpHandler{
 
 }
