@@ -1,6 +1,5 @@
 package org.webmessage;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	private Channel serverChannel;
 	private List<HttpHandler> httpHanlders;
 	private List<WebSocketHandler> webSocketHandlers;
+	
 	public DefaultWebMessageServer(){
 		this.bossExecutor = Executors.newCachedThreadPool();
 		this.workerExecutor = Executors.newCachedThreadPool();
@@ -40,10 +40,12 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		this.webSocketHandlers = new ArrayList<WebSocketHandler>();
 		this.socketAddress = new InetSocketAddress("localhost",8080);
 	}
+	
 	public DefaultWebMessageServer(SocketAddress soketAddress){
 		this();
 		this.socketAddress = new InetSocketAddress("localhost",8080);
 	}
+	
 	public DefaultWebMessageServer(Executor bossExecutor,Executor workerExecutor,SocketAddress socketAddress){
 		this.bossExecutor = bossExecutor;
 		this.workerExecutor = workerExecutor;

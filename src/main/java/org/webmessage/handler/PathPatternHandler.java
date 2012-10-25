@@ -1,8 +1,12 @@
 package org.webmessage.handler;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class PathPatternHandler implements HttpHandler{
+import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.jboss.netty.handler.codec.http.HttpResponse;
+
+public class PathPatternHandler implements HttpHandler{
 	private Pattern pathPattern;
 	private HttpHandler handler;
 	
@@ -25,6 +29,13 @@ public abstract class PathPatternHandler implements HttpHandler{
 	}
 	public void setHandler(HttpHandler handler) {
 		this.handler = handler;
+	}
+	public void handle(HttpRequest request, HttpResponse response) {
+		// TODO Auto-generated method stub
+		Matcher m = this.pathPattern.matcher(request.getUri());
+		if(m.matches()){
+			this.handler.handle(request, response);
+		}
 	}
 	
 }
