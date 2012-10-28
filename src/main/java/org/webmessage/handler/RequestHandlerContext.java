@@ -3,8 +3,8 @@ package org.webmessage.handler;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
-public interface RouterControl {
-	RequestHandlerContext nextHandler();
+public interface RequestHandlerContext {
+	RequestHandlerContext sendNext(HttpRequest request);
 	RequestHandlerContext nexthandler(HttpRequest request,HttpResponse response);
-	RequestHandlerContext getContext();
+	RequestHandlerContext end(HttpResponse response);
 }

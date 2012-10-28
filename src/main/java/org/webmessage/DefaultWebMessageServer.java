@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -22,6 +21,8 @@ import org.jboss.netty.handler.codec.http.HttpContentCompressor;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.webmessage.handler.HttpHandler;
+import org.webmessage.handler.NettyRequestHandler;
+import org.webmessage.handler.PathPatternHandler;
 import org.webmessage.handler.WebSocketHandler;
 
 public class DefaultWebMessageServer implements WebMessageServer {
@@ -31,13 +32,12 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	private ServerBootstrap bootstrap; 
 	private Channel serverChannel;
 	private List<HttpHandler> httpHanlders;
-	private List<WebSocketHandler> webSocketHandlers;
+	private NettyRequestHandler nettyHandler;
 	
 	public DefaultWebMessageServer(){
 		this.bossExecutor = Executors.newCachedThreadPool();
 		this.workerExecutor = Executors.newCachedThreadPool();
 		this.httpHanlders = new ArrayList<HttpHandler>();
-		this.webSocketHandlers = new ArrayList<WebSocketHandler>();
 		this.socketAddress = new InetSocketAddress("localhost",8080);
 	}
 	
@@ -51,10 +51,11 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		this.workerExecutor = workerExecutor;
 		this.socketAddress = socketAddress;
 		this.httpHanlders = new ArrayList<HttpHandler>();
-		this.webSocketHandlers = new ArrayList<WebSocketHandler>();
 	}
 
 	public Future<DefaultWebMessageServer> start() {
+		this.nettyHandler = new NettyRequestHandler(this.httpHanlders.iterator());
+		
 		FutureTask<DefaultWebMessageServer> future = new FutureTask<DefaultWebMessageServer>(new Callable<DefaultWebMessageServer>(){
 
 			public DefaultWebMessageServer call() throws Exception {
@@ -71,6 +72,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		                pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
 		                pipeline.addLast("encoder", new HttpResponseEncoder());
 		                pipeline.addLast("deflater", new HttpContentCompressor());
+		                pipeline.addLast("messagehandler",nettyHandler);
 		                return pipeline;
 					}
 					
@@ -109,30 +111,23 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	}
 
 	public WebMessageServer addHandler(HttpHandler handler) {
-		// TODO Auto-generated method stub
-		return this;
+		this.httpHanlders.add(handler);
+		return DefaultWebMessageServer.this;
 	}
 
 	public WebMessageServer addHandler(String path, HttpHandler handler) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		this.httpHanlders.add(new PathPatternHandler(path,handler));
+		
+		return DefaultWebMessageServer.this;
 	}
 
 	public WebMessageServer addHandler(String path, WebSocketHandler handler) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		this.httpHanlders.add(new PathPatternHandler(path,handler));
+		return DefaultWebMessageServer.this;
 	}
 
-	public WebMessageServer addHttpHandlers(Map<String, HttpHandler> handlers) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public WebMessageServer addWebSocketHandlers(
-			Map<String, WebSocketHandler> handlers) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	public boolean isRunning(){
 		return serverChannel !=null && serverChannel.isBound();
 	}
