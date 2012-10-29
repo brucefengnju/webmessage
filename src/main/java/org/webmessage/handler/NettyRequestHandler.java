@@ -48,26 +48,26 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void handleUpstream(ChannelHandlerContext arg0, ChannelEvent arg1)
 			throws Exception {
-		// TODO Auto-generated method stub
+		
 		super.handleUpstream(arg0, arg1);
 	}
 
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
 			throws Exception {
-		// TODO Auto-generated method stub
+
 		this.nettyContext = ctx;
 		this.requestContext = new DefaultRequestHandlerContext(this.handlerIterator,
 				this.request,this.response,this.nettyContext);
 		this.request = (HttpRequest)e.getMessage();
 		this.requestContext.nexthandler(this.request, this.response);
+		System.out.println(this.response);
 		
 	}
 
 	@Override
 	public void writeComplete(ChannelHandlerContext ctx, WriteCompletionEvent e)
 			throws Exception {
-		// TODO Auto-generated method stub
 		super.writeComplete(ctx, e);
 	}
 

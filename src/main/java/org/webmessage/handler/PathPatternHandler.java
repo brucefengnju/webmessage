@@ -32,12 +32,12 @@ public class PathPatternHandler implements HttpHandler{
 	}
 	
 	public void handle(HttpRequest request, HttpResponse response,RequestHandlerContext context) {
-		// TODO Auto-generated method stub
+		
 		Matcher m = this.pathPattern.matcher(request.getUri());
 		if(m.matches()){
 			this.handler.handle(request, response,context);
 		}else{
-			context.sendNext(request);
+			context.sendNext(request,response);
 		}
 	}
 	

@@ -2,9 +2,12 @@ package org.webmessage.handler;
 
 import java.util.Iterator;
 
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.webmessage.helpers.HttpResponseHelper;
 
 public class DefaultRequestHandlerContext implements RequestHandlerContext {
 	private Iterator<HttpHandler> handlerIterator;
@@ -25,14 +28,15 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		this.nettyContext = nettyContext;
 	}
 
-	public RequestHandlerContext sendNext(HttpRequest request) {
+	public RequestHandlerContext sendNext(HttpRequest request,HttpResponse response) {
 
 		if(this.isEnd){
 			return DefaultRequestHandlerContext.this;
 		}
 		if(this.handlerIterator.hasNext()){
-			this.handlerIterator.next().handle(request, this.response, DefaultRequestHandlerContext.this);
+			this.handlerIterator.next().handle(request, response, DefaultRequestHandlerContext.this);
 		}else{
+			response = HttpResponseHelper.helloWorldResponse();
 			this.end(response);
 		}
 		return DefaultRequestHandlerContext.this;
@@ -48,6 +52,7 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		if(this.handlerIterator.hasNext()){
 			this.handlerIterator.next().handle(request, response, DefaultRequestHandlerContext.this);
 		}else{
+			
 			this.end(response);
 		}
 		
@@ -59,6 +64,7 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		}
 		
 		this.nettyContext.getChannel().write(response);
+
 		this.isEnd = true;
 		
 		return DefaultRequestHandlerContext.this;
