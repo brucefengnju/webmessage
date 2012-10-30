@@ -37,7 +37,7 @@ public class PathPatternHandler implements HttpHandler{
 		if(m.matches()){
 			this.handler.handle(request, response,context);
 		}else{
-			context.sendNext(request,response);
+			context.nexthandler(request,response);
 		}
 	}
 	

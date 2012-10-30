@@ -61,7 +61,6 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 				this.request,this.response,this.nettyContext);
 		this.request = (HttpRequest)e.getMessage();
 		this.requestContext.nexthandler(this.request, this.response);
-		System.out.println(this.response);
 		
 	}
 

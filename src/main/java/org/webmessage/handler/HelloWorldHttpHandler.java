@@ -1,5 +1,6 @@
 package org.webmessage.handler;
 
+import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -18,7 +19,8 @@ public class HelloWorldHttpHandler implements HttpHandler {
 		
 		response.setContent(ChannelBuffers.copiedBuffer("HelloWorld", CharsetUtil.UTF_8));
         response.setHeader(CONTENT_TYPE, "text/plain; charset=UTF-8");
-        
+        response.setHeader(CONTENT_LENGTH, response.getContent().readableBytes());
+        routerContext.end(response);
 	}
 
 }

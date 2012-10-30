@@ -1,10 +1,14 @@
 package org.webmessage.handler;
 
+import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
+import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
+
 import java.util.Iterator;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.webmessage.helpers.HttpResponseHelper;
@@ -28,31 +32,17 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		this.nettyContext = nettyContext;
 	}
 
-	public RequestHandlerContext sendNext(HttpRequest request,HttpResponse response) {
-
+	public RequestHandlerContext nexthandler(HttpRequest request,
+			HttpResponse response) {
+		this.request = request;
 		if(this.isEnd){
 			return DefaultRequestHandlerContext.this;
 		}
+		
 		if(this.handlerIterator.hasNext()){
 			this.handlerIterator.next().handle(request, response, DefaultRequestHandlerContext.this);
 		}else{
 			response = HttpResponseHelper.helloWorldResponse();
-			this.end(response);
-		}
-		return DefaultRequestHandlerContext.this;
-	}
-
-	public RequestHandlerContext nexthandler(HttpRequest request,
-			HttpResponse response) {
-		
-		if(this.isEnd){
-			return DefaultRequestHandlerContext.this;
-		}
-		
-		if(this.handlerIterator.hasNext()){
-			this.handlerIterator.next().handle(request, response, DefaultRequestHandlerContext.this);
-		}else{
-			
 			this.end(response);
 		}
 		
@@ -62,11 +52,19 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		if(this.isEnd){
 			return DefaultRequestHandlerContext.this;
 		}
+		boolean keepAlive = HttpHeaders.isKeepAlive(this.request); 
+        if (keepAlive) {
+            response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, response.getContent().readableBytes());
+            response.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        }
+        
+		ChannelFuture future = this.nettyContext.getChannel().write(response);
+		if(keepAlive){
+			future.addListener(ChannelFutureListener.CLOSE);
+		}
 		
-		this.nettyContext.getChannel().write(response);
-
 		this.isEnd = true;
-		
+		this.response = response;
 		return DefaultRequestHandlerContext.this;
 	}
 
