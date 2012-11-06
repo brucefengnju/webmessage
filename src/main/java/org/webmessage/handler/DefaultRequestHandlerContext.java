@@ -1,8 +1,5 @@
 package org.webmessage.handler;
 
-import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
-import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
-
 import java.util.Iterator;
 
 import org.jboss.netty.channel.ChannelFuture;
