@@ -20,7 +20,6 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 	public DefaultRequestHandlerContext(Iterator<HttpHandler> handlerIterator) {
 		this.handlerIterator = handlerIterator;
 	}
-
 	public DefaultRequestHandlerContext(Iterator<HttpHandler> handlerIterator,
 			HttpRequest request, HttpResponse response,ChannelHandlerContext nettyContext) {
 		this.handlerIterator = handlerIterator;
