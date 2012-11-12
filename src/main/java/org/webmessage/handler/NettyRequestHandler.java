@@ -11,6 +11,7 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.channel.WriteCompletionEvent;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.webmessage.handler.http.HttpHandler;
 
 public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	

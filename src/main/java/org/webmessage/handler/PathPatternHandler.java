@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.webmessage.handler.http.HttpHandler;
 
 public class PathPatternHandler implements HttpHandler{
 	private Pattern pathPattern;

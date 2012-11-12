@@ -2,8 +2,8 @@ package org.webmessage;
 
 import java.util.concurrent.Future;
 
-import org.webmessage.handler.HttpHandler;
-import org.webmessage.handler.WebSocketHandler;
+import org.webmessage.handler.http.HttpHandler;
+import org.webmessage.handler.websocket.WebSocketHandler;
 
 public interface WebMessageServer {
 	

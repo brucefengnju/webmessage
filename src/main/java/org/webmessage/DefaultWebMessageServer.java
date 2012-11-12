@@ -20,10 +20,10 @@ import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
 import org.jboss.netty.handler.codec.http.HttpContentCompressor;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
-import org.webmessage.handler.HttpHandler;
 import org.webmessage.handler.NettyRequestHandler;
 import org.webmessage.handler.PathPatternHandler;
-import org.webmessage.handler.WebSocketHandler;
+import org.webmessage.handler.http.HttpHandler;
+import org.webmessage.handler.websocket.WebSocketHandler;
 
 public class DefaultWebMessageServer implements WebMessageServer {
 	private SocketAddress socketAddress;
