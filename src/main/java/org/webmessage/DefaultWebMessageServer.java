@@ -54,6 +54,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	}
 
 	public Future<DefaultWebMessageServer> start() {
+
 		this.nettyHandler = new NettyRequestHandler(this.httpHanlders.iterator());
 		
 		FutureTask<DefaultWebMessageServer> future = new FutureTask<DefaultWebMessageServer>(new Callable<DefaultWebMessageServer>(){

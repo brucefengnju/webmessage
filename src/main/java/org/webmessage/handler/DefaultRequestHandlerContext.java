@@ -8,7 +8,9 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.http.HttpHandler;
+import org.webmessage.handler.websocket.WebSocketHandler;
 import org.webmessage.helpers.HttpResponseHelper;
 
 public class DefaultRequestHandlerContext implements RequestHandlerContext {
@@ -87,6 +89,15 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 
 	public void setResponse(HttpResponse response) {
 		this.response = response;
+	}
+	public ChannelHandlerContext getNettyContext() {
+		return nettyContext;
+	}
+	public void setNettyContext(ChannelHandlerContext nettyContext) {
+		this.nettyContext = nettyContext;
+	}
+	public WebSocketChannel convertToWebsocketHandler(WebSocketHandler handler) {
+		return null;
 	}
 
 }

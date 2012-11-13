@@ -2,6 +2,7 @@ package org.webmessage.client;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 
@@ -62,12 +63,13 @@ public class WsClient {
 	                   return pipeline;
 	               }
 	          });
-
+	            
 	           // Connect
 	           System.out.println("WebSocket Client connecting");
 	           this.future =
 	                   bootstrap.connect(
 	                           new InetSocketAddress(uri.getHost(), uri.getPort()));
+	           sendHandshake();
 	           this.future.syncUninterruptibly();
 
 	}
@@ -84,5 +86,10 @@ public class WsClient {
 		if(this.bootstrap != null){
 			this.bootstrap.releaseExternalResources();
 		}
+	}
+	public static void main(String[] args) throws Exception{
+		URI uri = new URI("ws://localhost:8080/websocket");
+		WsClient wc = new WsClient(uri);
+		wc.run();
 	}
 }
