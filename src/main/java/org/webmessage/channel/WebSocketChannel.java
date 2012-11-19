@@ -1,7 +1,10 @@
 package org.webmessage.channel;
 
-public interface WebSocketChannel extends HttpChannel{
-	void sendMessage(String message);
-	void sendMessage(byte[] message);
+public interface WebSocketChannel{
+	WebSocketChannel sendMessage(String message);
+	WebSocketChannel sendMessage(byte[] message);
+	
+	WebSocketChannel close();
 	boolean isOpen();
+	String getProtocol();
 }

@@ -6,10 +6,12 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import org.jboss.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
+import org.webmessage.channel.BaseWebSocketChannel;
 import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.RequestHandlerContext;
-import org.webmessage.handler.WebSocketServerHandler;
 import org.webmessage.helpers.HttpRequestHelper;
+import org.webmessage.netty.WebSocketMessageEncoder;
+import org.webmessage.netty.WebSocketServerHandler;
 
 public class BaseWebSocketHandler implements WebSocketHandler {
 
@@ -38,27 +40,32 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 		if(HttpRequestHelper.isWebSocketRequest(request)){
 			this.ctx = routerContext.getNettyContext();
 			this.handshake(request);
-			this.ctx.getPipeline().replace("messagehandler", "wshandler", new WebSocketServerHandler());
-			
+			WebSocketChannel channel = new BaseWebSocketChannel(this.ctx);
+			this.ctx.getPipeline().replace("messagehandler", "wshandler", new WebSocketServerHandler(this,channel));
+			this.ctx.getPipeline().addLast("messageencoder", new WebSocketMessageEncoder());
+			this.onOpen(channel);
 		}else{
 			routerContext.nexthandler(request, response);
 		}
 	}
 
 	public void onOpen(WebSocketChannel channel) {
-
+		System.out.println("test websocket onopen");
+		channel.sendMessage("hello world");
 	}
 
 	public void onClose(WebSocketChannel channel) {
-
+		System.out.println("test websocket onclose");
+		//channel.sendMessage("scoket close");
 	}
 
-	public void onMessage(WebSocketChannel channel) {
-
+	public void onMessage(WebSocketChannel channel,String message) {
+		System.out.println("test websocket onmessage");
+		
 	}
 
 	public void onError(WebSocketChannel channel) {
-		
+		System.out.println("test websocket onerro");
 	}
 	public void handshake(HttpRequest request){
 		if(HttpRequestHelper.isWebSocketRequest(request)){
