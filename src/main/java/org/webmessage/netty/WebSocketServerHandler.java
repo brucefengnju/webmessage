@@ -1,5 +1,6 @@
 package org.webmessage.netty;
 
+import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -58,7 +59,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
-		System.out.println("on close");
 	}
 
 	@Override
@@ -71,32 +71,44 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void channelBound(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
-		System.out.println("on bound");
 		ctx.getPipeline().remove("messageencoder");
 	}
 
 	@Override
 	public void channelUnbound(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
-		System.out.println("on unbound");
 		this.websocketHandler.onClose(this.websocketChannel);
 	}
 
 	private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
 		if(frame instanceof PingWebSocketFrame){
-			System.out.println("do ping ");
+			ChannelBuffer buffer = frame.getBinaryData();
+			if(buffer.readable()){
+				byte[] msg = new byte[buffer.readableBytes()];
+				buffer.getBytes(buffer.readerIndex(), msg);
+				this.websocketHandler.onPing(this.websocketChannel, msg);
+			}
 		}else if(frame instanceof PongWebSocketFrame){
-			System.out.println("do pong ");
-			
+			ChannelBuffer buffer = frame.getBinaryData();
+			if(buffer.readable()){
+				byte[] msg = new byte[buffer.readableBytes()];
+				buffer.getBytes(buffer.readerIndex(), msg);
+				this.websocketHandler.onPong(this.websocketChannel, msg);
+			}
 		}else if(frame instanceof CloseWebSocketFrame){
 			
 			System.out.println("do close frame");
 			
 		}else if(frame instanceof TextWebSocketFrame){
-			System.out.println("do text");
-			
+			String msg = ((TextWebSocketFrame)frame).getText();
+			this.websocketHandler.onMessage(this.websocketChannel, msg);
 		}else if(frame  instanceof BinaryWebSocketFrame){
-			System.out.println("do binary");
+			ChannelBuffer buffer = ((BinaryWebSocketFrame)frame).getBinaryData();
+			if(buffer.readable()){
+				byte[] msg = new byte[buffer.readableBytes()];
+				buffer.getBytes(buffer.readerIndex(), msg);
+				this.websocketHandler.onMessage(this.websocketChannel, msg);
+			}
 		}
 	}
 }

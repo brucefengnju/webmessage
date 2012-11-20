@@ -5,6 +5,7 @@ public interface WebSocketChannel{
 	WebSocketChannel sendMessage(byte[] message);
 	
 	WebSocketChannel close();
-	boolean isOpen();
+	WebSocketChannel ping(byte[] message);
+	WebSocketChannel pong(byte[] message);
 	String getProtocol();
 }

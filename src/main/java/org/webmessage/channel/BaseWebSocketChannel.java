@@ -5,27 +5,24 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import org.jboss.netty.handler.codec.http.websocketx.PingWebSocketFrame;
+import org.jboss.netty.handler.codec.http.websocketx.PongWebSocketFrame;
 import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.webmessage.Protocol;
 
 public class BaseWebSocketChannel implements WebSocketChannel {
 	
 	private ChannelHandlerContext ctx;
-	private boolean open;
 	
 	public BaseWebSocketChannel(ChannelHandlerContext ctx) {
 		this.ctx = ctx;
-		this.open = false; 
 	}
 	
 	public WebSocketChannel sendMessage(String message) {
 		
-		//return this.sendMessage(message.getBytes());
 		Channel channel = this.ctx.getChannel();
 		if(channel.isWritable()){
-			//channel.write(new TextWebSocketFrame(message));
 			channel.write(message);
-			//channel.write(new BinaryWebSocketFrame(ChannelBuffers.copiedBuffer(message.getBytes())));
 		}
 		return this;
 
@@ -39,13 +36,26 @@ public class BaseWebSocketChannel implements WebSocketChannel {
 		return this;
 	}
 
-	public WebSocketChannel close() {
-		closeChannel();
+	public WebSocketChannel ping(byte[] message) {
+		Channel channel = this.ctx.getChannel();
+		if(channel.isWritable()){
+			PingWebSocketFrame frame = new PingWebSocketFrame(ChannelBuffers.copiedBuffer(message));
+			channel.write(frame);
+		}
 		return this;
 	}
 
-	public boolean isOpen() {
-		return this.open;
+	public WebSocketChannel pong(byte[] message) {
+		Channel channel = this.ctx.getChannel();
+		if(channel.isWritable()){
+			PongWebSocketFrame frame = new PongWebSocketFrame(ChannelBuffers.copiedBuffer(message));
+			channel.write(frame);
+		}
+		return this;
+	}
+	public WebSocketChannel close() {
+		closeChannel();
+		return this;
 	}
 
 	public String getProtocol() {

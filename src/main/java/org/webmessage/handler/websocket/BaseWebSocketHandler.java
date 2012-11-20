@@ -19,7 +19,6 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 	private String webSocketPath;
 	private WebSocketServerHandshaker handshaker;
 	
-	
 	public BaseWebSocketHandler() {
 	}
 	
@@ -50,23 +49,35 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 	}
 
 	public void onOpen(WebSocketChannel channel) {
-		System.out.println("test websocket onopen");
-		channel.sendMessage("hello world");
-	}
-
-	public void onClose(WebSocketChannel channel) {
-		System.out.println("test websocket onclose");
-		//channel.sendMessage("scoket close");
-	}
-
-	public void onMessage(WebSocketChannel channel,String message) {
-		System.out.println("test websocket onmessage");
 		
 	}
 
-	public void onError(WebSocketChannel channel) {
-		System.out.println("test websocket onerro");
+	public void onClose(WebSocketChannel channel) {
+		
 	}
+
+	public void onMessage(WebSocketChannel channel,String message) {
+		
+	}
+	
+	public void onMessage(WebSocketChannel channel, byte[] message) {
+		
+	}
+
+
+	public void onError(WebSocketChannel channel) {
+		
+	}
+	
+	public void onPong(WebSocketChannel channel, byte[] message) {
+		
+	}
+
+
+	public void onPing(WebSocketChannel channel, byte[] message) {
+		
+	}
+
 	public void handshake(HttpRequest request){
 		if(HttpRequestHelper.isWebSocketRequest(request)){
 			WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
@@ -82,6 +93,5 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 	private String getWebSocketLocation(HttpRequest request){
 		return "ws://" + request.getHeader(HttpHeaders.Names.HOST) + this.webSocketPath;
 	}
-
 
 }
