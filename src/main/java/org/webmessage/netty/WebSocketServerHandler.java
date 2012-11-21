@@ -53,7 +53,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
-		System.out.println("on open");
 	}
 
 	@Override
@@ -64,7 +63,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void writeComplete(ChannelHandlerContext ctx, WriteCompletionEvent e)
 			throws Exception {
-		System.out.print("do writeComplete");
 	}
 
 	
@@ -96,8 +94,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 				this.websocketHandler.onPong(this.websocketChannel, msg);
 			}
 		}else if(frame instanceof CloseWebSocketFrame){
-			
-			System.out.println("do close frame");
 			
 		}else if(frame instanceof TextWebSocketFrame){
 			String msg = ((TextWebSocketFrame)frame).getText();

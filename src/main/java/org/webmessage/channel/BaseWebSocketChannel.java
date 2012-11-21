@@ -4,10 +4,8 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.jboss.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import org.jboss.netty.handler.codec.http.websocketx.PongWebSocketFrame;
-import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.webmessage.Protocol;
 
 public class BaseWebSocketChannel implements WebSocketChannel {

@@ -20,7 +20,7 @@ public class WebSocketTest {
 	//@Test
 	public static void main(String[]args) throws Exception, ExecutionException{
 		DefaultWebMessageServer server = new DefaultWebMessageServer();
-		server.addHandler("/websocket",new BaseWebSocketHandler());
+		server.addHandler("/websocket",new EchoWebSocketHandler());
 		server.start().get();
 	}
 	public void testHandshake(){
