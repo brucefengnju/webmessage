@@ -24,6 +24,8 @@ import org.webmessage.handler.NettyRequestHandler;
 import org.webmessage.handler.PathPatternHandler;
 import org.webmessage.handler.http.HttpHandler;
 import org.webmessage.handler.websocket.WebSocketHandler;
+import org.webmessage.netty.ConnectionsRecoderHandler;
+
 
 public class DefaultWebMessageServer implements WebMessageServer {
 	private SocketAddress socketAddress;
@@ -33,17 +35,27 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	private Channel serverChannel;
 	private List<HttpHandler> httpHanlders;
 	private NettyRequestHandler nettyHandler;
+	private ConnectionsRecoderHandler connectionRecoderHandler;
 	
 	public DefaultWebMessageServer(){
 		this.bossExecutor = Executors.newCachedThreadPool();
 		this.workerExecutor = Executors.newCachedThreadPool();
 		this.httpHanlders = new ArrayList<HttpHandler>();
 		this.socketAddress = new InetSocketAddress("localhost",8080);
+		this.connectionRecoderHandler = null;
+		this.nettyHandler = null;
 	}
-	
+	public DefaultWebMessageServer(int port){
+		this(new InetSocketAddress("localhost",port));
+	}
 	public DefaultWebMessageServer(SocketAddress soketAddress){
-		this();
-		this.socketAddress = new InetSocketAddress("localhost",8080);
+		this.bossExecutor = Executors.newCachedThreadPool();
+		this.workerExecutor = Executors.newCachedThreadPool();
+		this.httpHanlders = new ArrayList<HttpHandler>();
+		this.connectionRecoderHandler = null;
+		this.nettyHandler = null;
+		
+		this.socketAddress = soketAddress;
 	}
 	
 	public DefaultWebMessageServer(Executor bossExecutor,Executor workerExecutor,SocketAddress socketAddress){
@@ -56,7 +68,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	public Future<DefaultWebMessageServer> start() {
 
 		this.nettyHandler = new NettyRequestHandler(this.httpHanlders.iterator());
-		
+		this.connectionRecoderHandler = new ConnectionsRecoderHandler();
 		FutureTask<DefaultWebMessageServer> future = new FutureTask<DefaultWebMessageServer>(new Callable<DefaultWebMessageServer>(){
 
 			public DefaultWebMessageServer call() throws Exception {
@@ -68,7 +80,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 					
 					public ChannelPipeline getPipeline() throws Exception {
 		                ChannelPipeline pipeline = Channels.pipeline();
-
+		                pipeline.addLast("connectionRecoder", connectionRecoderHandler);
 		                pipeline.addLast("decoder", new HttpRequestDecoder());
 		                pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
 		                pipeline.addLast("encoder", new HttpResponseEncoder());
@@ -94,7 +106,11 @@ public class DefaultWebMessageServer implements WebMessageServer {
 			public DefaultWebMessageServer call() throws Exception {
 				if(serverChannel != null){
 					serverChannel.close();
-				}	
+				}
+				if(connectionRecoderHandler != null){
+					connectionRecoderHandler.closeAllOpenChannels();
+					connectionRecoderHandler = null;
+				}
 				if(bootstrap!=null){
 					bootstrap.releaseExternalResources();
 					bootstrap = null;

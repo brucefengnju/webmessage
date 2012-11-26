@@ -10,7 +10,6 @@ import org.webmessage.channel.BaseWebSocketChannel;
 import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.RequestHandlerContext;
 import org.webmessage.helpers.HttpRequestHelper;
-import org.webmessage.netty.WebSocketMessageEncoder;
 import org.webmessage.netty.WebSocketServerHandler;
 
 public class BaseWebSocketHandler implements WebSocketHandler {
@@ -41,7 +40,6 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 			this.handshake(request);
 			WebSocketChannel channel = new BaseWebSocketChannel(this.ctx);
 			this.ctx.getPipeline().replace("messagehandler", "wshandler", new WebSocketServerHandler(this,channel));
-			this.ctx.getPipeline().addLast("messageencoder", new WebSocketMessageEncoder());
 			this.onOpen(channel);
 		}else{
 			routerContext.nexthandler(request, response);
