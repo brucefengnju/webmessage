@@ -11,29 +11,30 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.http.HttpHandler;
 import org.webmessage.handler.websocket.WebSocketHandler;
-import org.webmessage.helpers.HttpResponseHelper;
 
 public class DefaultRequestHandlerContext implements RequestHandlerContext {
 	private Iterator<HttpHandler> handlerIterator;
-	private HttpRequest request;
-	private HttpResponse response;
+	private HttpRequest defaultRequest;
+	private HttpResponse defaultResponse;
 	private ChannelHandlerContext nettyContext;
 	private boolean isEnd = false;
-	
-	public DefaultRequestHandlerContext(Iterator<HttpHandler> handlerIterator) {
-		this.handlerIterator = handlerIterator;
-	}
+
 	public DefaultRequestHandlerContext(Iterator<HttpHandler> handlerIterator,
 			HttpRequest request, HttpResponse response,ChannelHandlerContext nettyContext) {
 		this.handlerIterator = handlerIterator;
-		this.request = request;
-		this.response = response;
+		this.defaultRequest = request;
+		this.defaultResponse = response;
 		this.nettyContext = nettyContext;
 	}
 
-	public RequestHandlerContext nexthandler(HttpRequest request,
+	public RequestHandlerContext nextHandler() {
+		return nextHandler(this.defaultRequest,this.defaultResponse);
+	}
+
+	public RequestHandlerContext nextHandler(HttpRequest request,
 			HttpResponse response) {
-		this.request = request;
+		this.defaultRequest = request;
+		this.defaultResponse = response;
 		if(this.isEnd){
 			return DefaultRequestHandlerContext.this;
 		}
@@ -41,18 +42,21 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		if(this.handlerIterator.hasNext()){
 			this.handlerIterator.next().handle(request, response, DefaultRequestHandlerContext.this);
 		}else{
-			response = HttpResponseHelper.helloWorldResponse();
 			this.end(response);
 		}
 		
 		return DefaultRequestHandlerContext.this;
 	}
+	
 	public RequestHandlerContext end(HttpResponse response) {
 		if(this.isEnd){
 			return DefaultRequestHandlerContext.this;
 		}
-		boolean keepAlive = HttpHeaders.isKeepAlive(this.request); 
+		boolean keepAlive = HttpHeaders.isKeepAlive(this.defaultRequest); 
         if (keepAlive) {
+        	if(response == null){
+        		System.out.println("error");
+        	}
             response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, response.getContent().readableBytes());
             response.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
         }
@@ -63,7 +67,7 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		}
 		
 		this.isEnd = true;
-		this.response = response;
+		this.defaultResponse = response;
 		return DefaultRequestHandlerContext.this;
 	}
 
@@ -76,19 +80,19 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 	}
 
 	public HttpRequest getRequest() {
-		return request;
+		return defaultRequest;
 	}
 
 	public void setRequest(HttpRequest request) {
-		this.request = request;
+		this.defaultRequest = request;
 	}
 
 	public HttpResponse getResponse() {
-		return response;
+		return defaultResponse;
 	}
 
 	public void setResponse(HttpResponse response) {
-		this.response = response;
+		this.defaultResponse = response;
 	}
 	public ChannelHandlerContext getNettyContext() {
 		return nettyContext;

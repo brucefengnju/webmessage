@@ -26,7 +26,10 @@ import org.webmessage.handler.http.HttpHandler;
 import org.webmessage.handler.websocket.WebSocketHandler;
 import org.webmessage.netty.ConnectionsRecoderHandler;
 
-
+/**
+ * Default WebMessageServer which implements interface {@link WebMessageServer}
+ *
+ */
 public class DefaultWebMessageServer implements WebMessageServer {
 	private SocketAddress socketAddress;
 	private Executor bossExecutor;
@@ -34,7 +37,10 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	private ServerBootstrap bootstrap; 
 	private Channel serverChannel;
 	private List<HttpHandler> httpHanlders;
+
 	private NettyRequestHandler nettyHandler;
+	
+	// This handler is used to close server channel when server is closing.
 	private ConnectionsRecoderHandler connectionRecoderHandler;
 	
 	public DefaultWebMessageServer(){
@@ -95,6 +101,8 @@ public class DefaultWebMessageServer implements WebMessageServer {
 			}
 			
 		});
+		
+		//start the server thread.
 		Thread thread = new Thread(future,"DefaultWebMessageServer");
 		thread.start();
 		return future;

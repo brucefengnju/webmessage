@@ -37,8 +37,9 @@ public class PathPatternHandler implements HttpHandler{
 		Matcher m = this.pathPattern.matcher(request.getUri());
 		if(m.matches()){
 			this.handler.handle(request, response,context);
+			context.nextHandler();
 		}else{
-			context.nexthandler(request,response);
+			context.nextHandler(request,response);
 		}
 	}
 	

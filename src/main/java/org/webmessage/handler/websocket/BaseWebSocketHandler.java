@@ -42,7 +42,7 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 			this.ctx.getPipeline().replace("messagehandler", "wshandler", new WebSocketServerHandler(this,channel));
 			this.onOpen(channel);
 		}else{
-			routerContext.nexthandler(request, response);
+			routerContext.nextHandler(request, response);
 		}
 	}
 

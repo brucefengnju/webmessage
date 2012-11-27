@@ -1,18 +1,24 @@
 package org.webmessage.handler;
 
+import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
+import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
 import java.util.Iterator;
 
-import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.jboss.netty.channel.WriteCompletionEvent;
+import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.webmessage.handler.http.HttpHandler;
 
+/**
+ * This handler dispatches request to certain httphandler when server recive httprequest.  
+ * @author brucefeng
+ *
+ */
 public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	
 	private ChannelHandlerContext nettyContext;
@@ -20,23 +26,11 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	private HttpRequest request;
 	private HttpResponse response;
 	private RequestHandlerContext requestContext;
-	
-	public NettyRequestHandler() {
-		
-	}
-	
 
 	public NettyRequestHandler(Iterator<HttpHandler> handlerIterator) {
 
 		this.handlerIterator = handlerIterator;
-	}
-
-
-	@Override
-	public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e)
-			throws Exception {
 		
-		super.channelClosed(ctx, e);
 	}
 
 	@Override
@@ -47,30 +41,18 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	}
 
 	@Override
-	public void handleUpstream(ChannelHandlerContext arg0, ChannelEvent arg1)
-			throws Exception {
-		
-		super.handleUpstream(arg0, arg1);
-	}
-
-	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
 			throws Exception {
 
+		this.request = (HttpRequest)e.getMessage();
+		this.response = new DefaultHttpResponse(HTTP_1_1,OK);
 		this.nettyContext = ctx;
+
 		this.requestContext = new DefaultRequestHandlerContext(this.handlerIterator,
 				this.request,this.response,this.nettyContext);
-		this.request = (HttpRequest)e.getMessage();
-		this.requestContext.nexthandler(this.request, this.response);
+		this.requestContext.nextHandler(this.request, this.response);
 		
 	}
-
-	@Override
-	public void writeComplete(ChannelHandlerContext ctx, WriteCompletionEvent e)
-			throws Exception {
-		super.writeComplete(ctx, e);
-	}
-
 
 	public ChannelHandlerContext getNettyContext() {
 		return nettyContext;
@@ -120,6 +102,5 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	public void setRequestContext(RequestHandlerContext requestContext) {
 		this.requestContext = requestContext;
 	}
-	
 	
 }
