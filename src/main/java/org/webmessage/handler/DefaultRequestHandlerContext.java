@@ -1,13 +1,18 @@
 package org.webmessage.handler;
 
+import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+
 import java.util.Iterator;
 
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.jboss.netty.handler.codec.http.HttpResponseStatus;
+import org.jboss.netty.util.CharsetUtil;
 import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.http.HttpHandler;
 import org.webmessage.handler.websocket.WebSocketHandler;
@@ -42,6 +47,11 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		if(this.handlerIterator.hasNext()){
 			this.handlerIterator.next().handle(request, response, DefaultRequestHandlerContext.this);
 		}else{
+			if(response.getContentLength() == 0){
+				response.setStatus(HttpResponseStatus.NOT_FOUND);
+				response.setHeader(CONTENT_TYPE, "text/plain; charset=UTF-8");
+				response.setContent(ChannelBuffers.copiedBuffer("NOT FOUND", CharsetUtil.UTF_8));
+			}
 			this.end(response);
 		}
 		
