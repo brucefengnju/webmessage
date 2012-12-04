@@ -18,6 +18,7 @@ import org.jboss.netty.handler.codec.http.CookieDecoder;
 import org.jboss.netty.handler.codec.http.CookieEncoder;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpVersion;
+import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.util.CharsetUtil;
 import org.webmessage.helpers.CookieWrap;
 
@@ -27,7 +28,11 @@ public class DefaultHttpRequest implements HttpRequest {
 	public DefaultHttpRequest(org.jboss.netty.handler.codec.http.HttpRequest nettyRequest){
 		this.nettyRequest = nettyRequest;
 	}
-
+	
+	public DefaultHttpRequest(HttpVersion httpVersion, HttpMethod method, String uri){
+		this.nettyRequest = 
+				new org.jboss.netty.handler.codec.http.DefaultHttpRequest(httpVersion,method,uri);
+	}
 	public HttpMethod getMethod() {
 		return this.nettyRequest.getMethod();
 	}
@@ -145,15 +150,14 @@ public class DefaultHttpRequest implements HttpRequest {
 		return content;
 	}
 
-	public void addQueryParam(String name, String value) {
-		
-
-	}
 
 	public Map<String, List<String>> getParameters() {
-		// TODO Auto-generated method stub
-		
-		return null;
+		if(this.getMethod() == HttpMethod.GET){
+			return new  QueryStringDecoder(this.getUri()).getParameters();
+		}else if(this.getMethod() == HttpMethod.POST){
+			return new QueryStringDecoder(this.getBody()).getParameters();
+		}
+		return Collections.emptyMap();
 	}
 
 	public List<HttpCookie> getCookies() {
@@ -164,8 +168,10 @@ public class DefaultHttpRequest implements HttpRequest {
 		while(it.hasNext()){
 			httpCookies.add(CookieWrap.parseCookie(it.next()));
 		}
-		
-		return httpCookies.iterator().hasNext()?httpCookies:Collections.EMPTY_LIST;
+		if(httpCookies.isEmpty()){
+			return Collections.emptyList();
+		}
+		return httpCookies;
 	}
 
 	public HttpCookie getCookie(String name) {
@@ -177,6 +183,10 @@ public class DefaultHttpRequest implements HttpRequest {
 			}
 		}
 		return null;
+	}
+
+	public String getPath() {
+		return new QueryStringDecoder(this.getUri()).getPath();
 	}
 
 }

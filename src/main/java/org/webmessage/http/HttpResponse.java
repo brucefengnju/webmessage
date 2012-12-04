@@ -13,7 +13,7 @@ public interface HttpResponse extends org.jboss.netty.handler.codec.http.HttpRes
 	 * @return
 	 */
 	int getStatusCode();
-	void setStatusCode();
+	void setStatusCode(int statusCode);
 
 	/**
 	 * get and set content of http resopnse
@@ -32,7 +32,7 @@ public interface HttpResponse extends org.jboss.netty.handler.codec.http.HttpRes
 	Charset getCharset();
 	
 	void addCookie(HttpCookie cookie);
-	
+	void addCookie(String name,String value);
 	/**
 	 * 
 	 * @return if the httpresponse need to write back

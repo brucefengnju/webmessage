@@ -25,7 +25,6 @@ public interface HttpRequest extends org.jboss.netty.handler.codec.http.HttpRequ
 	 * @param name
 	 * @param value
 	 */
-	void addQueryParam(String name,String value);
 	
 	Map<String,List<String>> getParameters();
 		
@@ -35,4 +34,6 @@ public interface HttpRequest extends org.jboss.netty.handler.codec.http.HttpRequ
 	 */
 	List<HttpCookie> getCookies();
 	HttpCookie getCookie(String name);
+	
+	String getPath();
 }
