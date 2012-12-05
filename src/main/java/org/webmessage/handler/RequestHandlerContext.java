@@ -12,5 +12,4 @@ public interface RequestHandlerContext {
 	RequestHandlerContext nextHandler();
 	RequestHandlerContext end(HttpResponse response);
 	ChannelHandlerContext getNettyContext();
-	WebSocketChannel convertToWebsocketHandler(HttpHandler handler); 
 }

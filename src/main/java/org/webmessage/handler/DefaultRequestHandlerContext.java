@@ -11,7 +11,6 @@ import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.http.HttpHandler;
-import org.webmessage.handler.websocket.WebSocketHandler;
 import org.webmessage.http.HttpRequest;
 import org.webmessage.http.HttpResponse;
 
