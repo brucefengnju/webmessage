@@ -1,7 +1,7 @@
 package org.webmessage.helpers;
 
 import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.webmessage.http.HttpRequest;
 
 public class HttpRequestHelper {
 	public static boolean isWebSocketRequest(HttpRequest req){

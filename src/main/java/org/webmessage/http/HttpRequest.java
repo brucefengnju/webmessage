@@ -1,7 +1,6 @@
 package org.webmessage.http;
 
 import java.net.HttpCookie;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 /**

@@ -2,14 +2,14 @@ package org.webmessage.handler.websocket;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import org.jboss.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import org.webmessage.channel.BaseWebSocketChannel;
 import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.RequestHandlerContext;
 import org.webmessage.helpers.HttpRequestHelper;
+import org.webmessage.http.HttpRequest;
+import org.webmessage.http.HttpResponse;
 import org.webmessage.netty.WebSocketServerHandler;
 
 public class BaseWebSocketHandler implements WebSocketHandler {

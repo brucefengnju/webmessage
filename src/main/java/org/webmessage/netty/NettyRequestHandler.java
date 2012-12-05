@@ -9,12 +9,13 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.webmessage.handler.DefaultRequestHandlerContext;
 import org.webmessage.handler.RequestHandlerContext;
 import org.webmessage.handler.http.HttpHandler;
+import org.webmessage.http.DefaultHttpRequest;
+import org.webmessage.http.DefaultHttpResponse;
+import org.webmessage.http.HttpRequest;
+import org.webmessage.http.HttpResponse;
 
 /**
  * This handler dispatches request to certain httphandler when server recive httprequest.  
@@ -25,9 +26,10 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	
 	private ChannelHandlerContext nettyContext;
 	private Iterator<HttpHandler> handlerIterator; 
-	private HttpRequest request;
-	private HttpResponse response;
 	private RequestHandlerContext requestContext;
+	
+	private HttpRequest httpRequest;
+	private HttpResponse httpResponse;
 
 	public NettyRequestHandler(Iterator<HttpHandler> handlerIterator) {
 
@@ -46,15 +48,20 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
 			throws Exception {
 		
-		if(e.getMessage() instanceof HttpRequest){
+		if(e.getMessage() instanceof org.jboss.netty.handler.codec.http.HttpRequest){
 			
-			this.request = (HttpRequest)e.getMessage();
-			this.response = new DefaultHttpResponse(HTTP_1_1,OK);
+			org.jboss.netty.handler.codec.http.HttpRequest nettyRequest = (org.jboss.netty.handler.codec.http.HttpRequest)e.getMessage();
+			org.jboss.netty.handler.codec.http.HttpResponse nettyRresponse = new org.jboss.netty.handler.codec.http.DefaultHttpResponse(HTTP_1_1,OK);
 			this.nettyContext = ctx;
-			this.requestContext = new DefaultRequestHandlerContext(this.handlerIterator,
-					this.request,this.response,this.nettyContext);
-			this.requestContext.nextHandler(this.request, this.response);
+			this.httpRequest = new DefaultHttpRequest(nettyRequest);
+			this.httpResponse = new DefaultHttpResponse(nettyRresponse);
 			
+			this.requestContext = new DefaultRequestHandlerContext(this.handlerIterator,
+					this.httpRequest,this.httpResponse,this.nettyContext);
+			this.requestContext.nextHandler(this.httpRequest, this.httpResponse);
+			
+		}else{
+			super.messageReceived(ctx, e);
 		}
 	}
 
@@ -78,25 +85,21 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	}
 
 
-	public HttpRequest getRequest() {
-		return request;
+	public HttpRequest getHttpRequest() {
+		return httpRequest;
 	}
 
-
-	public void setRequest(HttpRequest request) {
-		this.request = request;
+	public void setHttpRequest(HttpRequest httpRequest) {
+		this.httpRequest = httpRequest;
 	}
 
-
-	public HttpResponse getResponse() {
-		return response;
+	public HttpResponse getHttpResponse() {
+		return httpResponse;
 	}
 
-
-	public void setResponse(HttpResponse response) {
-		this.response = response;
+	public void setHttpResponse(HttpResponse httpResponse) {
+		this.httpResponse = httpResponse;
 	}
-
 
 	public RequestHandlerContext getRequestContext() {
 		return requestContext;

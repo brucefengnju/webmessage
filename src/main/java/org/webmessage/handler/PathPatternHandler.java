@@ -3,9 +3,9 @@ package org.webmessage.handler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.webmessage.handler.http.HttpHandler;
+import org.webmessage.http.HttpRequest;
+import org.webmessage.http.HttpResponse;
 
 public class PathPatternHandler implements HttpHandler{
 	private Pattern pathPattern;
