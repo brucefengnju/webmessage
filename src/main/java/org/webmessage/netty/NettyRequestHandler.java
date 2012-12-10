@@ -4,6 +4,7 @@ import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -26,6 +27,7 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 	
 	private ChannelHandlerContext nettyContext;
 	private Iterator<HttpHandler> handlerIterator; 
+	private List<HttpHandler> handlers;
 	private RequestHandlerContext requestContext;
 	
 	private HttpRequest httpRequest;
@@ -37,6 +39,9 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 		
 	}
 
+	public NettyRequestHandler(List<HttpHandler> handlers){
+		this.handlers = handlers;
+	}
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e)
 			throws Exception {
@@ -56,7 +61,7 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 			this.httpRequest = new DefaultHttpRequest(nettyRequest);
 			this.httpResponse = new DefaultHttpResponse(nettyRresponse);
 			
-			this.requestContext = new DefaultRequestHandlerContext(this.handlerIterator,
+			this.requestContext = new DefaultRequestHandlerContext(this.handlers,
 					this.httpRequest,this.httpResponse,this.nettyContext);
 			this.requestContext.nextHandler(this.httpRequest, this.httpResponse);
 			
@@ -108,6 +113,14 @@ public class NettyRequestHandler extends SimpleChannelUpstreamHandler {
 
 	public void setRequestContext(RequestHandlerContext requestContext) {
 		this.requestContext = requestContext;
+	}
+
+	public List<HttpHandler> getHandlers() {
+		return handlers;
+	}
+
+	public void setHandlers(List<HttpHandler> handlers) {
+		this.handlers = handlers;
 	}
 	
 }

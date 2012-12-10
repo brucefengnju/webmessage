@@ -9,7 +9,8 @@ public class EchoHttpHandler implements HttpHandler {
 	public void handle(HttpRequest request, HttpResponse response,
 			RequestHandlerContext routerContext) {
 		response.setContent("this is echo");
-		response.feedback();
+		routerContext.end(response);
+		routerContext.nextHandler();
 	}
 
 }

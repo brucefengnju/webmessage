@@ -35,9 +35,9 @@ public interface HttpResponse extends org.jboss.netty.handler.codec.http.HttpRes
 	void addCookie(String name,String value);
 	/**
 	 * 
-	 * @return if the httpresponse need to write back
+	 * @return true when httpresponse need to write back
 	 */
-	boolean  end();
+	boolean  isEnd();
 	
 	/**
 	 * write response back to client  

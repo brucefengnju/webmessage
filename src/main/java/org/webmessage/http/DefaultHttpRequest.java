@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -19,129 +18,30 @@ import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.util.CharsetUtil;
 import org.webmessage.helpers.CookieWrap;
 
-public class DefaultHttpRequest implements HttpRequest {
-	private org.jboss.netty.handler.codec.http.HttpRequest nettyRequest;
-	
+public class DefaultHttpRequest extends AbstractHttpRequest {
+
 	public DefaultHttpRequest(org.jboss.netty.handler.codec.http.HttpRequest nettyRequest){
-		this.nettyRequest = nettyRequest;
+		super(nettyRequest);
 	}
 	
 	public DefaultHttpRequest(HttpVersion httpVersion, HttpMethod method, String uri){
-		this.nettyRequest = 
-				new org.jboss.netty.handler.codec.http.DefaultHttpRequest(httpVersion,method,uri);
+		super(new org.jboss.netty.handler.codec.http.DefaultHttpRequest(httpVersion,method,uri));
 	}
-	public HttpMethod getMethod() {
-		return this.nettyRequest.getMethod();
-	}
-
-	public void setMethod(HttpMethod method) {
-		this.nettyRequest.setMethod(method);
-
-	}
-
-	public String getUri() {
-		return this.nettyRequest.getUri();
-	}
-
-	public void setUri(String uri) {
-		this.nettyRequest.setUri(uri);
-	}
-
-	public String getHeader(String name) {
-		return this.nettyRequest.getHeader(name);
-	}
-
-	public List<String> getHeaders(String name) {
-		return this.nettyRequest.getHeaders(name);
-	}
-
-	public List<Entry<String, String>> getHeaders() {
-		return this.nettyRequest.getHeaders();
-	}
-
-	public boolean containsHeader(String name) {
-		return this.nettyRequest.containsHeader(name);
-	}
-
-	public Set<String> getHeaderNames() {
-		return this.nettyRequest.getHeaderNames();
-	}
-
-	public HttpVersion getProtocolVersion() {
-		return this.nettyRequest.getProtocolVersion();
-	}
-
-	public void setProtocolVersion(HttpVersion version) {
-		this.nettyRequest.setProtocolVersion(version);
-	}
-
-	public ChannelBuffer getContent() {
-		return this.nettyRequest.getContent();
-	}
-
-	public void setContent(ChannelBuffer content) {
-		this.nettyRequest.setContent(content);
-	}
-
-	public void addHeader(String name, Object value) {
-		this.nettyRequest.addHeader(name, value);
-
-	}
-
-	public void setHeader(String name, Object value) {
-		this.nettyRequest.setHeader(name, value);
-	}
-
-	public void setHeader(String name, Iterable<?> values) {
-		this.setHeader(name, values);
-	}
-
-	public void removeHeader(String name) {
-		this.nettyRequest.removeHeader(name);
-
-	}
-
-	public void clearHeaders() {
-		this.nettyRequest.clearHeaders();
-	}
-
-	@Deprecated
-	public long getContentLength() {
-		return this.nettyRequest.getContentLength();
-	}
-
-	@Deprecated
-	public long getContentLength(long defaultValue) {
-		return this.nettyRequest.getContentLength(defaultValue);
-	}
-
-	public boolean isChunked() {
-		return this.nettyRequest.isChunked();
-	}
-
-	public void setChunked(boolean chunked) {
-		this.nettyRequest.setChunked(chunked);
-	}
-
-	@Deprecated
-	public boolean isKeepAlive() {
-		return this.nettyRequest.isKeepAlive();
-	}
-
+	
 	public void setBody(String content) {
 		this.setBody(content.getBytes());
 	}
 
 	public void setBody(byte[] content) {
-		this.nettyRequest.setContent(ChannelBuffers.copiedBuffer(content));
+		this.getNettyRequest().setContent(ChannelBuffers.copiedBuffer(content));
 	}
 
 	public String getBody() {
-		return this.nettyRequest.getContent().toString(CharsetUtil.UTF_8);
+		return this.getNettyRequest().getContent().toString(CharsetUtil.UTF_8);
 	}
 
 	public byte[] getBodyBytes() {
-		ChannelBuffer buffer = this.nettyRequest.getContent();
+		ChannelBuffer buffer = this.getNettyRequest().getContent();
 		byte[] content = new byte[buffer.readableBytes()];
 		buffer.getBytes(buffer.readerIndex(), content);
 		return content;
