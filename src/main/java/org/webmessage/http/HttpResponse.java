@@ -48,5 +48,5 @@ public interface HttpResponse extends org.jboss.netty.handler.codec.http.HttpRes
 	 * write response back to client  
 	 */
 	
-	void feedback(RequestHandlerContext context);
+	void feedback(RequestHandlerContext context) throws Exception;
 }

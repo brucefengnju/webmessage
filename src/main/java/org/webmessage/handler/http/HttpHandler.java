@@ -5,5 +5,6 @@ import org.webmessage.http.HttpRequest;
 import org.webmessage.http.HttpResponse;
 
 public interface HttpHandler {
-	void handle(HttpRequest request,HttpResponse response,RequestHandlerContext routerContext);
+	void handle(HttpRequest request,HttpResponse response,
+			RequestHandlerContext routerContext)throws Exception;
 }

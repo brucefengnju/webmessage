@@ -23,11 +23,12 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 	public BaseWebSocketHandler(ChannelHandlerContext ctx, String webSocketPath) {
 		this.ctx = ctx;
 	}
+	 * @throws Exception 
 
 	 **/
 	
 	public void handle(HttpRequest request, HttpResponse response,
-			RequestHandlerContext routerContext) {
+			RequestHandlerContext routerContext) throws Exception {
 		if(HttpRequestHelper.isWebSocketRequest(request)){
 			//this.handshake(request);
 			routerContext.convertToWebsocketHandler(this);
@@ -36,19 +37,19 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 		}
 	}
 
-	public void onOpen(WebSocketChannel channel) {
+	public void onOpen(WebSocketChannel channel) throws Exception{
 		
 	}
 
-	public void onClose(WebSocketChannel channel) {
+	public void onClose(WebSocketChannel channel) throws Exception{
 		
 	}
 
-	public void onMessage(WebSocketChannel channel,String message) {
+	public void onMessage(WebSocketChannel channel,String message) throws Exception {
 		
 	}
 	
-	public void onMessage(WebSocketChannel channel, byte[] message) {
+	public void onMessage(WebSocketChannel channel, byte[] message) throws Exception {
 		
 	}
 
@@ -57,12 +58,12 @@ public class BaseWebSocketHandler implements WebSocketHandler {
 		
 	}
 	
-	public void onPong(WebSocketChannel channel, byte[] message) {
+	public void onPong(WebSocketChannel channel, byte[] message) throws Exception{
 		
 	}
 
 
-	public void onPing(WebSocketChannel channel, byte[] message) {
+	public void onPing(WebSocketChannel channel, byte[] message) throws Exception{
 		
 	}
 	

@@ -135,7 +135,7 @@ public abstract class AbstractHttpResponse implements HttpResponse {
 	@Deprecated
 	public abstract void feedback();
 	
-	public abstract void feedback(RequestHandlerContext context);
+	public abstract void feedback(RequestHandlerContext context) throws Exception;
 	
 	public org.jboss.netty.handler.codec.http.HttpResponse getNettyResponse() {
 		return nettyResponse;

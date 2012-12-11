@@ -32,7 +32,7 @@ public class PathPatternHandler implements HttpHandler{
 		this.handler = handler;
 	}
 	
-	public void handle(HttpRequest request, HttpResponse response,RequestHandlerContext context) {
+	public void handle(HttpRequest request, HttpResponse response,RequestHandlerContext context) throws Exception {
 		
 		Matcher m = this.pathPattern.matcher(request.getUri());
 		if(m.matches()){

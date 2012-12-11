@@ -4,11 +4,11 @@ import org.webmessage.channel.WebSocketChannel;
 import org.webmessage.handler.http.HttpHandler;
 
 public interface WebSocketHandler extends HttpHandler{
-	void onOpen(WebSocketChannel channel);
-	void onClose(WebSocketChannel channel);
-	void onMessage(WebSocketChannel channel,String message);
-	void onMessage(WebSocketChannel channel,byte[] message);
-	void onError(WebSocketChannel channel);
-	void onPong(WebSocketChannel channel,byte[] message);
-	void onPing(WebSocketChannel channel,byte[] message);
+	void onOpen(WebSocketChannel channel)throws Exception;
+	void onClose(WebSocketChannel channel)throws Exception;
+	void onMessage(WebSocketChannel channel,String message) throws Exception;
+	void onMessage(WebSocketChannel channel,byte[] message)throws Exception;
+	void onError(WebSocketChannel channel)throws Exception;
+	void onPong(WebSocketChannel channel,byte[] message)throws Exception;
+	void onPing(WebSocketChannel channel,byte[] message)throws Exception;
 }

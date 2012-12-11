@@ -84,26 +84,46 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 			if(buffer.readable()){
 				byte[] msg = new byte[buffer.readableBytes()];
 				buffer.getBytes(buffer.readerIndex(), msg);
-				this.websocketHandler.onPing(this.websocketChannel, msg);
+				try {
+					this.websocketHandler.onPing(this.websocketChannel, msg);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}else if(frame instanceof PongWebSocketFrame){
 			ChannelBuffer buffer = frame.getBinaryData();
 			if(buffer.readable()){
 				byte[] msg = new byte[buffer.readableBytes()];
 				buffer.getBytes(buffer.readerIndex(), msg);
-				this.websocketHandler.onPong(this.websocketChannel, msg);
+				try {
+					this.websocketHandler.onPong(this.websocketChannel, msg);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}else if(frame instanceof CloseWebSocketFrame){
 			
 		}else if(frame instanceof TextWebSocketFrame){
 			String msg = ((TextWebSocketFrame)frame).getText();
-			this.websocketHandler.onMessage(this.websocketChannel, msg);
+			try {
+				this.websocketHandler.onMessage(this.websocketChannel, msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else if(frame  instanceof BinaryWebSocketFrame){
 			ChannelBuffer buffer = ((BinaryWebSocketFrame)frame).getBinaryData();
 			if(buffer.readable()){
 				byte[] msg = new byte[buffer.readableBytes()];
 				buffer.getBytes(buffer.readerIndex(), msg);
-				this.websocketHandler.onMessage(this.websocketChannel, msg);
+				try {
+					this.websocketHandler.onMessage(this.websocketChannel, msg);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}

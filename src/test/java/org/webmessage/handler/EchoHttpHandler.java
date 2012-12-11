@@ -7,7 +7,7 @@ import org.webmessage.http.HttpResponse;
 public class EchoHttpHandler implements HttpHandler {
 
 	public void handle(HttpRequest request, HttpResponse response,
-			RequestHandlerContext routerContext) {
+			RequestHandlerContext routerContext) throws Exception {
 		response.setContent("this is echo");
 		//routerContext.end(response);
 		response.feedback(routerContext);

@@ -16,13 +16,13 @@ public class EchoWebSocketHandler extends BaseWebSocketHandler {
 	}
 
 	@Override
-	public void onMessage(WebSocketChannel channel, String message) {
+	public void onMessage(WebSocketChannel channel, String message) throws Exception {
 		channel.sendMessage(message);
 		System.out.println("echo text message");
 	}
 
 	@Override
-	public void onMessage(WebSocketChannel channel, byte[] message) {
+	public void onMessage(WebSocketChannel channel, byte[] message) throws Exception {
 		channel.sendMessage(message);
 		System.out.println("echo binary message");
 	}

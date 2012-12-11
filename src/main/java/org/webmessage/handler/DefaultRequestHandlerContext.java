@@ -48,11 +48,11 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		this.defaultRequest = request;
 		this.defaultResponse = response;
 	}
-	public RequestHandlerContext nextHandler() {
+	public RequestHandlerContext nextHandler() throws Exception {
 		return nextHandler(this.defaultRequest,this.defaultResponse);
 	}
 
-	public RequestHandlerContext nextHandler(HttpRequest request,HttpResponse response) {
+	public RequestHandlerContext nextHandler(HttpRequest request,HttpResponse response) throws Exception {
 		this.defaultRequest = request;
 		this.defaultResponse = response;
 		
@@ -118,7 +118,7 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		this.nettyContext = nettyContext;
 	}
 	
-	public WebSocketChannel convertToWebsocketHandler(WebSocketHandler handler) {
+	public WebSocketChannel convertToWebsocketHandler(WebSocketHandler handler)throws Exception {
 		if(HttpRequestHelper.isWebSocketRequest(this.defaultRequest)){
 			this.handshake(this.defaultRequest);
 			WebSocketChannel channel = new BaseWebSocketChannel(this.nettyContext);
@@ -130,7 +130,7 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 
 	}
 
-	private void handshake(HttpRequest request){
+	private void handshake(HttpRequest request) throws Exception{
 		if(HttpRequestHelper.isWebSocketRequest(request)){
 			WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
 		              getWebSocketLocation(request), null, false);

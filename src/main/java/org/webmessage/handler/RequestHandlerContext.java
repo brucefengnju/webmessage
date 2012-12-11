@@ -6,8 +6,8 @@ import org.webmessage.http.HttpRequest;
 import org.webmessage.http.HttpResponse;
 
 public interface RequestHandlerContext {
-	RequestHandlerContext nextHandler(HttpRequest request,HttpResponse response);
-	RequestHandlerContext nextHandler();
-	RequestHandlerContext end(HttpResponse response);
-	WebSocketChannel convertToWebsocketHandler(WebSocketHandler handler);
+	RequestHandlerContext nextHandler(HttpRequest request,HttpResponse response)throws Exception;
+	RequestHandlerContext nextHandler() throws Exception;
+	RequestHandlerContext end(HttpResponse response)throws Exception;
+	WebSocketChannel convertToWebsocketHandler(WebSocketHandler handler)throws Exception;
 }

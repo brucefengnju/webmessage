@@ -79,7 +79,7 @@ public class DefaultHttpResponse extends AbstractHttpResponse {
 		this.isEnd.set(true);
 	}
 
-	public void feedback(RequestHandlerContext context) {
+	public void feedback(RequestHandlerContext context) throws Exception{
 		context.end(this);
 		this.isEnd.set(true);
 	}
