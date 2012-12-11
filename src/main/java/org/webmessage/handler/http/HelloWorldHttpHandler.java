@@ -12,7 +12,8 @@ public class HelloWorldHttpHandler implements HttpHandler {
 			RequestHandlerContext routerContext) {
 		response.setContent("HelloWorld");
         response.setHeader(CONTENT_TYPE, "text/plain; charset=UTF-8");
-        routerContext.end(response);
+        //routerContext.end(response);
+        response.feedback(routerContext);
 	}
 
 }

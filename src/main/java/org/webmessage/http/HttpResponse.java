@@ -2,6 +2,8 @@ package org.webmessage.http;
 
 import java.net.HttpCookie;
 import java.nio.charset.Charset;
+
+import org.webmessage.handler.RequestHandlerContext;
 /**
  * HttpResponse 
  * @author brucefeng
@@ -39,8 +41,12 @@ public interface HttpResponse extends org.jboss.netty.handler.codec.http.HttpRes
 	 */
 	boolean  isEnd();
 	
+	@Deprecated
+	void feedback();
+	
 	/**
 	 * write response back to client  
 	 */
-	void feedback();
+	
+	void feedback(RequestHandlerContext context);
 }

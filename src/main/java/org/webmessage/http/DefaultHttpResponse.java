@@ -11,6 +11,7 @@ import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.jboss.netty.util.CharsetUtil;
+import org.webmessage.handler.RequestHandlerContext;
 
 public class DefaultHttpResponse extends AbstractHttpResponse {
 	
@@ -73,9 +74,14 @@ public class DefaultHttpResponse extends AbstractHttpResponse {
 		return this.isEnd.get();
 	}
 
+	@Deprecated
 	public void feedback() {
 		this.isEnd.set(true);
 	}
 
+	public void feedback(RequestHandlerContext context) {
+		context.end(this);
+		this.isEnd.set(true);
+	}
 
 }

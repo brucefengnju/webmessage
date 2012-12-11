@@ -87,7 +87,6 @@ public class DefaultRequestHandlerContext implements RequestHandlerContext {
 		if(keepAlive){
 			future.addListener(ChannelFutureListener.CLOSE);
 		}
-		response.feedback();
 		this.defaultResponse = response;
 		return DefaultRequestHandlerContext.this;
 	}

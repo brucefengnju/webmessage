@@ -32,6 +32,7 @@ public interface HttpRequest extends org.jboss.netty.handler.codec.http.HttpRequ
 	 * @return
 	 */
 	List<HttpCookie> getCookies();
+	
 	HttpCookie getCookie(String name);
 	
 	String getPath();

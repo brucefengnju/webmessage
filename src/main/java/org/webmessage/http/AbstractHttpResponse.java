@@ -9,6 +9,7 @@ import java.util.Set;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
+import org.webmessage.handler.RequestHandlerContext;
 
 public abstract class AbstractHttpResponse implements HttpResponse {
 
@@ -131,11 +132,15 @@ public abstract class AbstractHttpResponse implements HttpResponse {
 
 	public abstract boolean isEnd();
 
+	@Deprecated
 	public abstract void feedback();
+	
+	public abstract void feedback(RequestHandlerContext context);
 	
 	public org.jboss.netty.handler.codec.http.HttpResponse getNettyResponse() {
 		return nettyResponse;
 	}
+	
 	public void setNettyResponse(
 			org.jboss.netty.handler.codec.http.HttpResponse nettyResponse) {
 		this.nettyResponse = nettyResponse;
