@@ -6,7 +6,6 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.jboss.netty.channel.WriteCompletionEvent;
 import org.jboss.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.jboss.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import org.jboss.netty.handler.codec.http.websocketx.PingWebSocketFrame;
@@ -50,22 +49,7 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 		e.getCause().printStackTrace();
 	}
 	
-	@Override
-	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e)
-			throws Exception {
-	}
-
-	@Override
-	public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e)
-			throws Exception {
-	}
-
-	@Override
-	public void writeComplete(ChannelHandlerContext ctx, WriteCompletionEvent e)
-			throws Exception {
-	}
-
-	
+		
 	@Override
 	public void channelBound(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
@@ -87,7 +71,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 				try {
 					this.websocketHandler.onPing(this.websocketChannel, msg);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -99,7 +82,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 				try {
 					this.websocketHandler.onPong(this.websocketChannel, msg);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -110,7 +92,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 			try {
 				this.websocketHandler.onMessage(this.websocketChannel, msg);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else if(frame  instanceof BinaryWebSocketFrame){
@@ -121,7 +102,6 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 				try {
 					this.websocketHandler.onMessage(this.websocketChannel, msg);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
