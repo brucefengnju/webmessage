@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -20,6 +21,8 @@ import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
 import org.jboss.netty.handler.codec.http.HttpContentCompressor;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
+import org.jboss.netty.handler.execution.ExecutionHandler;
+import org.jboss.netty.handler.execution.MemoryAwareThreadPoolExecutor;
 import org.webmessage.handler.PathPatternHandler;
 import org.webmessage.handler.http.HttpHandler;
 import org.webmessage.handler.websocket.WebSocketHandler;
@@ -36,8 +39,9 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	private Executor workerExecutor;
 	private ServerBootstrap bootstrap; 
 	private Channel serverChannel;
+	private ExecutionHandler executeHandler;
 	private List<HttpHandler> httpHanlders;
-
+	
 	private NettyRequestHandler nettyHandler;
 	
 	// This handler is used to close server channel when server is closing.
@@ -48,6 +52,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		this.workerExecutor = Executors.newCachedThreadPool();
 		this.httpHanlders = new ArrayList<HttpHandler>();
 		this.socketAddress = new InetSocketAddress("localhost",8080);
+		this.executeHandler = null;
 		this.connectionRecoderHandler = null;
 		this.nettyHandler = null;
 	}
@@ -60,20 +65,27 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		this.httpHanlders = new ArrayList<HttpHandler>();
 		this.connectionRecoderHandler = null;
 		this.nettyHandler = null;
-		
+		this.executeHandler = null;
 		this.socketAddress = soketAddress;
-	}
+	} 
 	
 	public DefaultWebMessageServer(Executor bossExecutor,Executor workerExecutor,SocketAddress socketAddress){
 		this.bossExecutor = bossExecutor;
 		this.workerExecutor = workerExecutor;
 		this.socketAddress = socketAddress;
+		this.nettyHandler = null;
+		this.executeHandler = null;
 		this.httpHanlders = new ArrayList<HttpHandler>();
 	}
 
 	public Future<DefaultWebMessageServer> start() {
 
 		this.nettyHandler = new NettyRequestHandler(this.httpHanlders);
+		if(this.executeHandler == null){
+			this.executeHandler = new ExecutionHandler(
+					new MemoryAwareThreadPoolExecutor( 
+							16, 65536, 1048576, 30, TimeUnit.SECONDS));
+		}
 		this.connectionRecoderHandler = new ConnectionsRecoderHandler();
 		FutureTask<DefaultWebMessageServer> future = new FutureTask<DefaultWebMessageServer>(new Callable<DefaultWebMessageServer>(){
 
@@ -91,6 +103,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		                pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
 		                pipeline.addLast("encoder", new HttpResponseEncoder());
 		                pipeline.addLast("deflater", new HttpContentCompressor());
+		                pipeline.addLast("executionHandler", executeHandler);
 		                pipeline.addLast("messagehandler",nettyHandler);
 		                return pipeline;
 					}
@@ -167,6 +180,31 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	}
 	public void setWorkerExecutor(Executor workerExecutor) {
 		this.workerExecutor = workerExecutor;
+	}
+	public SocketAddress getSocketAddress() {
+		return socketAddress;
+	}
+	public void setSocketAddress(SocketAddress socketAddress) {
+		this.socketAddress = socketAddress;
+	}
+	public ExecutionHandler getExecuteHandler() {
+		return executeHandler;
+	}
+	public void setExecuteHandler(ExecutionHandler executeHandler) {
+		this.executeHandler = executeHandler;
+	}
+	public NettyRequestHandler getNettyHandler() {
+		return nettyHandler;
+	}
+	public void setNettyHandler(NettyRequestHandler nettyHandler) {
+		this.nettyHandler = nettyHandler;
+	}
+	public ConnectionsRecoderHandler getConnectionRecoderHandler() {
+		return connectionRecoderHandler;
+	}
+	public void setConnectionRecoderHandler(
+			ConnectionsRecoderHandler connectionRecoderHandler) {
+		this.connectionRecoderHandler = connectionRecoderHandler;
 	}
 	
 }
