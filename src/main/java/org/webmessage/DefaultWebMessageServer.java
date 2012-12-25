@@ -1,5 +1,6 @@
 package org.webmessage;
 
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -10,6 +11,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -23,11 +27,14 @@ import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.jboss.netty.handler.execution.ExecutionHandler;
 import org.jboss.netty.handler.execution.MemoryAwareThreadPoolExecutor;
+import org.jboss.netty.handler.ssl.SslHandler;
+import org.webmessage.exception.WebMessageException;
 import org.webmessage.handler.PathPatternHandler;
 import org.webmessage.handler.http.HttpHandler;
 import org.webmessage.handler.websocket.WebSocketHandler;
 import org.webmessage.netty.ConnectionsRecoderHandler;
 import org.webmessage.netty.NettyRequestHandler;
+import org.webmessage.util.SslContextFactory;
 
 /**
  * Default WebMessageServer which implements interface {@link WebMessageServer}
@@ -41,6 +48,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	private Channel serverChannel;
 	private ExecutionHandler executeHandler;
 	private List<HttpHandler> httpHanlders;
+	private SSLContext sslContext;
 	
 	private NettyRequestHandler nettyHandler;
 	
@@ -54,6 +62,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		this.socketAddress = new InetSocketAddress("localhost",8080);
 		this.executeHandler = null;
 		this.connectionRecoderHandler = null;
+		this.sslContext = null;
 		this.nettyHandler = null;
 	}
 	public DefaultWebMessageServer(int port){
@@ -67,6 +76,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		this.nettyHandler = null;
 		this.executeHandler = null;
 		this.socketAddress = soketAddress;
+		this.sslContext = null;
 	} 
 	
 	public DefaultWebMessageServer(Executor bossExecutor,Executor workerExecutor,SocketAddress socketAddress){
@@ -75,6 +85,7 @@ public class DefaultWebMessageServer implements WebMessageServer {
 		this.socketAddress = socketAddress;
 		this.nettyHandler = null;
 		this.executeHandler = null;
+		this.sslContext = null;
 		this.httpHanlders = new ArrayList<HttpHandler>();
 	}
 
@@ -98,6 +109,11 @@ public class DefaultWebMessageServer implements WebMessageServer {
 					
 					public ChannelPipeline getPipeline() throws Exception {
 		                ChannelPipeline pipeline = Channels.pipeline();
+		                if(sslContext != null){
+		                	SSLEngine sslEngine = sslContext.createSSLEngine();
+		                	sslEngine.setUseClientMode(false);
+		                	pipeline.addLast("ssl", new SslHandler(sslEngine));
+		                }
 		                pipeline.addLast("connectionRecoder", connectionRecoderHandler);
 		                pipeline.addLast("decoder", new HttpRequestDecoder());
 		                pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
@@ -169,6 +185,12 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	public boolean isRunning(){
 		return serverChannel !=null && serverChannel.isBound();
 	}
+	
+	public void startupSSL(InputStream keyStore, String storePass, String pass)
+			throws WebMessageException{
+		this.sslContext = SslContextFactory.getInstance(keyStore, storePass)
+										   .getServerContext(pass);
+	}
 	public Executor getBossExecutor() {
 		return bossExecutor;
 	}
@@ -205,6 +227,12 @@ public class DefaultWebMessageServer implements WebMessageServer {
 	public void setConnectionRecoderHandler(
 			ConnectionsRecoderHandler connectionRecoderHandler) {
 		this.connectionRecoderHandler = connectionRecoderHandler;
+	}
+	public SSLContext getSslContext() {
+		return sslContext;
+	}
+	public void setSslContext(SSLContext sslContext) {
+		this.sslContext = sslContext;
 	}
 	
 }
