@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.webmessage.handler.RequestHandlerContext;
 import org.webmessage.handler.http.HttpHandler;
@@ -18,6 +19,31 @@ public abstract class FileHandler implements HttpHandler {
 	private HttpResponse response;
 	private RequestHandlerContext routerContext;
 	private Executor executor;
+	
+	
+	public FileHandler(Executor executor) {
+		this.executor = executor;
+	}
+
+
+	public FileHandler(HttpRequest request, HttpResponse response,
+			RequestHandlerContext routerContext) {
+		this.request = request;
+		this.response = response;
+		this.routerContext = routerContext;
+		this.executor = Executors.newSingleThreadExecutor();
+	}
+	
+	
+	public FileHandler(HttpRequest request, HttpResponse response,
+			RequestHandlerContext routerContext, Executor executor) {
+		this.request = request;
+		this.response = response;
+		this.routerContext = routerContext;
+		this.executor = executor;
+	}
+
+
 	public void handle(HttpRequest request, HttpResponse response,
 			RequestHandlerContext routerContext) throws Exception {
 		executor.execute(new IOReader(resolveFile(request)));
